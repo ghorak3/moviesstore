@@ -7,7 +7,7 @@
   color: #FFFEF6 !important;
 }
 .bg-dark {
-  background-color: #2E2E2E !important;
+  background-color: #626262 !important;
 }
 .ms-footer {
   background-color: #202020;
@@ -17,7 +17,7 @@
   font-size: 13px;
 }
 .ms-footer a:hover {
-  color: #6ab43e;
+  color: #002e78;
   text-decoration: none;
 }
 .ms-footer-bottom span{
@@ -25,7 +25,7 @@
   line-height: 38px;
 }
 .ms-footer-bottom a {
-  color: #6ab43e;
+  color: #002e78;
   text-decoration: none;
 }
 .ms-footer-bottom a:hover {
