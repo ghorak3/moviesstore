@@ -7,16 +7,16 @@
       <div class="col-md-6 mx-auto mb-3">
         <h2>{{ template_data.movie.name }}</h2>
         <hr />
-        <p><b>Description:</b> {{template_data.movie.description }}</p>
-        <p><b>Price:</b> ${{template_data.movie.price }}</p>
+        <p><b>Description:</b> {{ template_data.movie.description }}</p>
+        <p><b>Price:</b> ${{ template_data.movie.price }}</p>
+
         <p class="card-text">
           <form method="post" action="{% url 'cart.add' id=template_data.movie.id %}">
             <div class="row">
               {% csrf_token %}
               <div class="col-auto">
                 <div class="input-group col-auto">
-                  <div class="input-group-text">Quantity
-                    </div>
+                  <div class="input-group-text">Quantity</div>
                   <input type="number" min="1" max="10" class="form-control quantity-input" name="quantity" value="1">
                 </div>
               </div>
@@ -29,29 +29,27 @@
 
         <h2>Reviews</h2>
         <hr />
-        <ul class="list-group">{% for review in template_data.reviews %}
+
+        <ul class="list-group">
+          {% for review in template_data.reviews %}
           <li class="list-group-item pb-3 pt-3">
-            <h5 class="card-title">Review by {{ review.user.username }}
-            </h5>
+            <h5 class="card-title">Review by {{ review.user.username }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ review.date }}</h6>
             <p class="card-text">{{ review.comment }}</p>
-            {% if user.is_authenticated and user == review.user %}
-            <a class="btn btn-primary" href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">
-              Edit
-            </a>
-            <a class="btn btn-danger" href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">
-              Delete
-            </a>
 
+            {% if user.is_authenticated and user == review.user %}
+              <a class="btn btn-primary" href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">Edit</a>
+              <a class="btn btn-danger" href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">Delete</a>
             {% endif %}
+
+            {# ------- Comments (flat list) ------- #}
             <div class="mt-3 ps-3 border-start">
               <h6>Comments</h6>
               <ul class="list-unstyled">
                 {% for c in review.comments_flat %}
                   <li class="mb-2">
-                    <strong>{{ c.author.username }}</strong>: {{ c.body }}
                     {# If your Comment model uses 'user' instead of 'author', change to c.user.username #}
-                    <br>
+                    <strong>{{ c.author.username }}</strong>: {{ c.body }}<br>
                     <small class="text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</small>
                   </li>
                 {% empty %}
@@ -71,54 +69,40 @@
                 <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
               {% endif %}
             </div>
-
-              {% if user.is_authenticated %}
-                <form method="post" action="{% url 'movies.comments.create' template_data.movie.id review.id %}">
-                  {% csrf_token %}
-                  {{ template_data.comment_form.parent }} {# stays hidden & blank for top-level #}
-                  <div class="mb-2">
-                    <textarea name="body" class="form-control" rows="2" placeholder="Write a comment…" required></textarea>
-                  </div>
-                  <button type="submit" class="btn btn-sm btn-outline-dark">Add Comment</button>
-                </form>
-              {% else %}
-                <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
-              {% endif %}
-            </div>
+            {# ------- End Comments ------- #}
 
           </li>
           {% endfor %}
         </ul>
 
+        {# ------- Create a new review (only when logged in) ------- #}
         {% if user.is_authenticated %}
-        <div class="container mt-4">
-          <div class="row justify-content-center">
-            <div class="col-12">
-              <div class="card shadow p-3 mb-4 rounded">
-                <div class="card-body">
-                  <b class="text-start">Create a review
-                    </b><br /><br />
-                  <form method="POST" action="{% url 'movies.create_review' id=template_data.movie.id %}">
-                    {% csrf_token %}
-                    <p>
-                      <label for="comment">Comment:</label>
-                      <textarea name="comment" required
-                      class="form-control"
-                      id="comment"></textarea>
-                    </p>
-                    <div class="text-center">
-                      <button type="submit" class="btn bg-dark text-white">
-                        Add Review
-                      </button>
-                    </div>
-                  </form>
+          <div class="container mt-4">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <div class="card shadow p-3 mb-4 rounded">
+                  <div class="card-body">
+                    <b class="text-start">Create a review</b><br /><br />
+                    <form method="POST" action="{% url 'movies.create_review' id=template_data.movie.id %}">
+                      {% csrf_token %}
+                      <p>
+                        <label for="comment">Comment:</label>
+                        <textarea name="comment" required class="form-control" id="comment"></textarea>
+                      </p>
+                      <div class="text-center">
+                        <button type="submit" class="btn bg-dark text-white">Add Review</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         {% endif %}
+        {# ------- End create review ------- #}
+
       </div>
+
       <div class="col-md-6 mx-auto mb-3 text-center">
         <img src="{{ template_data.movie.image.url }}" class="rounded img-card-400" />
       </div>
