@@ -44,7 +44,47 @@
             </a>
 
             {% endif %}
+            <div class="mt-3 ps-3 border-start">
+              <h6>Comments</h6>
+              <ul class="list-unstyled">
+                {% for c in review.comments_flat %}
+                  <li class="mb-2">
+                    <strong>{{ c.author.username }}</strong>: {{ c.body }}
+                    {# If your Comment model uses 'user' instead of 'author', change to c.user.username #}
+                    <br>
+                    <small class="text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</small>
+                  </li>
+                {% empty %}
+                  <li class="text-muted">No comments yet.</li>
+                {% endfor %}
+              </ul>
 
+              {% if user.is_authenticated %}
+                <form method="post" action="{% url 'movies.comments.create' template_data.movie.id review.id %}">
+                  {% csrf_token %}
+                  <div class="mb-2">
+                    <textarea name="body" class="form-control" rows="2" placeholder="Write a comment…" required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-outline-dark">Add Comment</button>
+                </form>
+              {% else %}
+                <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
+              {% endif %}
+            </div>
+
+              {% if user.is_authenticated %}
+                <form method="post" action="{% url 'movies.comments.create' template_data.movie.id review.id %}">
+                  {% csrf_token %}
+                  {{ template_data.comment_form.parent }} {# stays hidden & blank for top-level #}
+                  <div class="mb-2">
+                    <textarea name="body" class="form-control" rows="2" placeholder="Write a comment…" required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-outline-dark">Add Comment</button>
+                </form>
+              {% else %}
+                <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
+              {% endif %}
+            </div>
 
           </li>
           {% endfor %}

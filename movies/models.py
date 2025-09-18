@@ -17,5 +17,11 @@ class Review(models.Model):
         on_delete=models.CASCADE)
     user = models.ForeignKey(User,
         on_delete=models.CASCADE)
+class Comment(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="comments")
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.id) + ' - ' + self.movie.name
